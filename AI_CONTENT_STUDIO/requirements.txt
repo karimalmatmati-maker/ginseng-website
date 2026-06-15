@@ -1,0 +1,41 @@
+# ============================================================
+# AI Content Studio — Python Dependencies
+# Python 3.10+
+# Install: pip install -r requirements.txt
+# ============================================================
+
+# Core video processing
+opencv-python>=4.9.0
+moviepy>=1.0.3
+ffmpeg-python>=0.2.0
+
+# AI / transcription
+openai>=1.30.0
+openai-whisper>=20231117
+stable-ts>=2.17.0           # word-level Whisper timestamps
+
+# Audio analysis
+librosa>=0.10.1
+soundfile>=0.12.1
+scipy>=1.12.0
+numpy>=1.26.0
+
+# PDF report generation
+reportlab>=4.2.0
+Pillow>=10.3.0
+
+# Config & utilities
+pyyaml>=6.0.1
+python-dotenv>=1.0.1
+watchdog>=4.0.0
+tqdm>=4.66.0
+rich>=13.7.0                # beautiful CLI output
+
+# Optional: Google Gemini
+google-generativeai>=0.5.0
+
+# Optional: yt-dlp for downloading reference content
+yt-dlp>=2024.5.0
+
+# Optional: ElevenLabs
+elevenlabs>=1.1.0

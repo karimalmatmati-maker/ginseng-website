@@ -96,7 +96,7 @@ if (canvas && video && hero) {
       const rect = canvas.getBoundingClientRect();
       const scrubRange = rect.height;
       const scrolled = scrubRange > 0
-        ? THREE.MathUtils.clamp(-rect.top, 0, scrubRange)
+        ? THREE.MathUtils.clamp(-rect.top + rect.height * 0.5, 0, scrubRange)
         : 0;
       targetProgress = scrubRange > 0 ? scrolled / scrubRange : 0;
     }

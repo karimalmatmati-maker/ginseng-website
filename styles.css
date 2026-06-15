@@ -758,8 +758,8 @@ nav a:hover::after { width: 100%; }
   .price-card.featured:hover { transform: translateY(-4px); }
   .hero-glow-gold, .hero-glow-ember { width: 420px; height: 420px; }
   .kinetic-heading { font-size: clamp(1.6rem, 6vw, 2.6rem); max-width: 600px; margin: 0; }
-  .hero-visual-wrap { width: calc(100% + 24px); margin-inline: -12px; }
-  .eyebrow { max-width: calc(100% - 32px); }
+  .hero-visual-wrap { width: calc(100% + 24px); margin-inline: -12px; margin-top: 54px; }
+  .eyebrow { position: static; max-width: calc(100% - 32px); margin-top: 12px; }
   .hero-sub { max-width: 540px; margin: 0; }
   .hero-actions { flex-direction: column; }
   .hero-actions .btn { text-align: center; }

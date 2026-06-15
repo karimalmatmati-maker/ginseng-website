@@ -1,0 +1,179 @@
+# ============================================================
+# AI Content Studio — Master Configuration
+# Luma IT-Solutions
+# ============================================================
+
+project:
+  name: "AI Content Studio"
+  version: "1.0.0"
+  author: "Luma IT-Solutions"
+
+# ── Output directory structure ──────────────────────────────
+paths:
+  input:            "input"
+  output:           "output"
+  shorts_youtube:   "output/shorts/youtube"
+  shorts_instagram: "output/shorts/instagram"
+  shorts_tiktok:    "output/shorts/tiktok"
+  audio:            "output/audio"
+  subtitles:        "output/subtitles"
+  thumbnails:       "output/thumbnails"
+  metadata:         "output/metadata"
+  reports:          "output/reports"
+  logs:             "logs"
+
+# ── Pipeline control ─────────────────────────────────────────
+pipeline:
+  enabled_modules:
+    - video_analyst
+    - hook_detector
+    - audio_engineer
+    - color_analyzer
+    - subtitle_generator
+    - auto_editor
+    - seo_writer
+    - thumbnail_generator
+    - higgsfield_generator
+    - content_report
+  parallel_processing: false
+  max_workers: 4
+  fail_fast: false          # continue pipeline on individual module failure
+
+# ── Module 1: Video Analyst ──────────────────────────────────
+video_analyst:
+  sample_rate: 1            # frames per second for analysis
+  min_scene_duration: 2.0   # seconds
+  motion_threshold: 0.25    # 0.0–1.0; higher = less sensitive
+  silence_threshold_db: -40 # dB; below this = silence
+  max_key_frames: 6         # frames sent to GPT-4 Vision
+
+# ── Module 2: Hook Detector ──────────────────────────────────
+hook_detector:
+  hook_duration: 3          # first N seconds to evaluate as a hook
+  analysis_window: 60       # total seconds to analyse for hook candidates
+  scoring:
+    motion_weight:          0.30
+    audio_energy_weight:    0.20
+    visual_interest_weight: 0.30
+    ai_score_weight:        0.20
+
+# ── Module 3: Auto Editor ────────────────────────────────────
+auto_editor:
+  output_resolution: [1080, 1920]   # 9:16 vertical
+  output_fps: 30
+  output_codec: "libx264"
+  output_preset: "slow"             # slow = better compression
+  output_crf: 18                    # 18 = high quality
+  audio_codec: "aac"
+  audio_bitrate: "192k"
+  durations: [15, 30, 45, 60]       # short clip lengths in seconds
+  num_shorts_options: [5, 10, 20]
+  default_num_shorts: 5
+  default_duration: 30
+  crop_mode: "center"               # center | smart | face
+
+# ── Module 4: Subtitle Generator ────────────────────────────
+subtitle_generator:
+  whisper_model: "base"     # tiny | base | small | medium | large
+  language: "auto"
+  formats:
+    - "srt"
+    - "ass"
+    - "burned"
+  word_highlighting: true
+  speaker_detection: false
+  style:
+    font:          "Arial"
+    font_size:     52
+    font_color:    "&H00FFFFFF"   # ASS: white
+    outline_color: "&H00000000"   # ASS: black
+    outline_width: 2
+    shadow:        true
+    position:      "bottom"       # top | center | bottom
+    highlight_color: "&H0000FFFF" # ASS: yellow for word highlight
+
+# ── Module 5: Audio Engineer ─────────────────────────────────
+audio_engineer:
+  noise_floor_db: -60
+  min_rms_db: -20
+  use_adobe_podcast: false
+  use_elevenlabs: false
+  output_format: "wav"
+  sample_rate: 44100
+  channels: 2
+  spectral_analysis: true
+
+# ── Module 6: Color Analyzer ─────────────────────────────────
+color_analyzer:
+  sample_frames: 12
+  auto_apply: false         # NEVER modify original automatically
+  analysis:
+    brightness_target: 128  # 0-255
+    contrast_target: 60
+    saturation_target: 100
+
+# ── Module 7: SEO Writer ─────────────────────────────────────
+seo_writer:
+  platforms:
+    - youtube
+    - tiktok
+    - instagram
+  limits:
+    youtube:
+      title_max: 100
+      description_max: 5000
+      hashtags_max: 10
+    tiktok:
+      caption_max: 2200
+      hashtags_max: 30
+    instagram:
+      caption_max: 2200
+      hashtags_max: 30
+
+# ── Module 8: Thumbnail Generator ───────────────────────────
+thumbnail_generator:
+  output_size: [1280, 720]
+  num_candidates: 6
+  face_detection: true
+  composition_analysis: true
+  min_frame_quality: 50     # OpenCV Laplacian blur threshold
+
+# ── Module 9: Higgsfield Generator ──────────────────────────
+higgsfield_generator:
+  num_prompts: 5
+  available_styles:
+    - "Luxury Product Shot"
+    - "Macro Honey"
+    - "Cinematic Slow Motion"
+    - "Natural Light"
+    - "Golden Hour"
+    - "Apple Style"
+    - "Premium Commercial"
+    - "Documentary Realism"
+    - "Fashion Editorial"
+    - "Food Photography"
+
+# ── Module 10: Content Report ────────────────────────────────
+content_report:
+  format: "pdf"
+  include_frame_previews: true
+  page_size: "A4"           # A4 | Letter
+  theme_color: [26, 26, 46] # RGB; dark navy
+  accent_color: [0, 212, 255]
+  output_name: "content_report_{timestamp}.pdf"
+
+# ── API settings ─────────────────────────────────────────────
+api:
+  openai:
+    model: "gpt-4o"
+    vision_model: "gpt-4o"
+    max_tokens: 4096
+    temperature: 0.7
+  gemini:
+    model: "gemini-1.5-pro"
+    enabled: false
+  elevenlabs:
+    voice_id: "21m00Tcm4TlvDq8ikWAM"   # Rachel
+  adobe_podcast:
+    base_url: "https://podcast.adobe.com/api/v1"
+    enabled: false
