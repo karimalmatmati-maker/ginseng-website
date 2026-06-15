@@ -12,11 +12,20 @@
   --border: rgba(232, 179, 90, 0.18);
   --radius: 16px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Soft settle: heavy object easing to rest, no overshoot - used for
+     content that "arrives" (reveals, headings) */
+  --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Spring: a touch of overshoot before settling - used where something
+     should feel like it clicks/snaps into place */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Viscous: slow to start, slow to stop, symmetric resistance - used for
+     motion that should feel like it's moving through something thick */
+  --ease-viscous: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { overflow-x: hidden; }
 
 body {
   font-family: 'Fraunces', Georgia, serif;
@@ -26,6 +35,7 @@ body {
   color: var(--text);
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 h1, h2, h3 {
@@ -106,12 +116,29 @@ ul { list-style: none; }
   font-family: 'Fraunces', serif;
   font-weight: 600;
   font-size: 0.95rem;
-  transition: transform 0.2s var(--ease), box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  /* --btn-transform-transition is overridden per-state below so the
+     transform timing can vary (spring / viscous / quick press) without
+     re-declaring (and clobbering) the rest of this transition list. */
+  --btn-transform-transition: transform 0.4s var(--ease-spring);
+  transition: var(--btn-transform-transition), box-shadow 0.3s var(--ease-viscous), background 0.3s var(--ease-viscous), color 0.3s ease, border-color 0.3s var(--ease-viscous);
   border: 1px solid transparent;
   cursor: pointer;
 }
-.btn span { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; }
+.btn span { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.3s var(--ease-viscous); }
 .btn:hover { transform: translateY(-2px); }
+/* Pressing in is quick and damped - no overshoot - like pushing against
+   something with resistance; releasing springs back via the rule above */
+.btn:active {
+  transform: translateY(0) scale(0.97);
+  --btn-transform-transition: transform 0.15s var(--ease-viscous);
+}
+
+/* Magnetic pull: the button lags behind the cursor with thick, resistant
+   motion (a heavier shell), while its inner label catches up slightly
+   faster (the span transition above) - the two layers settle at slightly
+   different rates, reading as one solid object with depth rather than a
+   flat label sliding around. */
+.magnetic { --btn-transform-transition: transform 0.45s var(--ease-viscous); }
 
 .btn-primary {
   background: linear-gradient(135deg, var(--gold-soft), var(--gold));
@@ -141,7 +168,7 @@ ul { list-style: none; }
 .btn-small:hover { background: var(--gold-soft); }
 
 .btn-large { padding: 18px 44px; font-size: 1.05rem; }
-.btn-large .arrow { display: inline-block; font-style: normal; transition: transform 0.35s var(--ease); }
+.btn-large .arrow { display: inline-block; font-style: normal; transition: transform 0.45s var(--ease-spring); }
 .btn-large:hover .arrow { transform: translateX(6px); }
 
 /* Navbar */
@@ -165,7 +192,7 @@ ul { list-style: none; }
   height: 26px;
   color: var(--gold);
   flex-shrink: 0;
-  transition: color 0.4s ease, transform 0.5s var(--ease);
+  transition: color 0.4s var(--ease-viscous), transform 0.6s var(--ease-spring);
 }
 .brand:hover .logo-mark { color: var(--ember-soft); transform: rotate(10deg) scale(1.06); }
 .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
@@ -188,7 +215,7 @@ nav a {
   position: relative;
   font-size: 0.95rem;
   color: var(--text-dim);
-  transition: color 0.25s ease;
+  transition: color 0.3s var(--ease-viscous);
   padding-bottom: 4px;
 }
 nav a::after {
@@ -199,7 +226,9 @@ nav a::after {
   width: 0;
   height: 1px;
   background: var(--ember-soft);
-  transition: width 0.3s var(--ease);
+  /* Viscous spread, like the underline is being drawn through a thick
+     medium rather than wiping across instantly */
+  transition: width 0.45s var(--ease-viscous);
 }
 nav a:hover { color: var(--gold-soft); }
 nav a:hover::after { width: 100%; }
@@ -207,17 +236,50 @@ nav a:hover::after { width: 100%; }
 /* Hero */
 .hero {
   position: relative;
-  overflow: hidden;
-  padding: 130px 0 0;
-  text-align: center;
   background: #0e0c09;
 }
-.hero::before {
+.hero-pin {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 110px 0 56px;
+}
+@media (min-width: 721px) {
+  .hero { height: 155vh; }
+  .hero-pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 130px 0 48px;
+  }
+}
+.hero-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  align-items: end;
+  gap: 56px;
+  width: 100%;
+  height: 100%;
+  text-align: left;
+}
+.hero-visual {
+  position: relative;
+  height: 100%;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #1a1610;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--border);
+}
+.hero-visual::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(14, 12, 9, 0.55);
+  z-index: 1;
   pointer-events: none;
+  background: linear-gradient(180deg, rgba(14, 12, 9, 0) 60%, rgba(14, 12, 9, 0.55) 100%);
 }
 .hero-canvas {
   position: absolute;
@@ -226,7 +288,7 @@ nav a:hover::after { width: 100%; }
   width: 100%;
   height: 100%;
   pointer-events: none;
-  opacity: 0.62;
+  opacity: 1;
   z-index: 0;
 }
 .hero-video-source {
@@ -238,8 +300,14 @@ nav a:hover::after { width: 100%; }
   pointer-events: none;
 }
 @media (max-width: 720px) {
-  .hero-canvas,
-  .hero-video-source { display: none; }
+  .hero-visual {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    margin-bottom: 32px;
+  }
+  .hero-grid { grid-template-columns: 1fr; align-items: center; text-align: center; }
 }
 .hero-glow {
   position: absolute;
@@ -252,16 +320,16 @@ nav a:hover::after { width: 100%; }
   left: 38%;
   width: 640px;
   height: 640px;
-  background: radial-gradient(circle, rgba(232, 179, 90, 0.24) 0%, transparent 68%);
+  background: radial-gradient(circle, rgba(232, 179, 90, 0.18) 0%, transparent 68%);
 }
 .hero-glow-ember {
   top: -140px;
   right: -180px;
   width: 520px;
   height: 520px;
-  background: radial-gradient(circle, rgba(207, 87, 51, 0.20) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(207, 87, 51, 0.15) 0%, transparent 70%);
 }
-.hero-inner { position: relative; z-index: 1; padding-bottom: 84px; }
+.hero-text { width: 100%; }
 
 .eyebrow {
   display: inline-flex;
@@ -275,7 +343,7 @@ nav a:hover::after { width: 100%; }
   border: 1px solid var(--border);
   padding: 8px 22px 8px 16px;
   border-radius: 999px;
-  margin-bottom: 32px;
+  margin-bottom: 22px;
 }
 .eyebrow-dot {
   width: 7px;
@@ -283,7 +351,7 @@ nav a:hover::after { width: 100%; }
   border-radius: 50%;
   background: var(--ember);
   box-shadow: 0 0 0 4px rgba(207, 87, 51, 0.18);
-  animation: pulse-dot 2.4s ease-in-out infinite;
+  animation: pulse-dot 2.4s var(--ease-viscous) infinite;
 }
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
@@ -291,9 +359,9 @@ nav a:hover::after { width: 100%; }
 }
 
 .kinetic-heading {
-  font-size: clamp(2.6rem, 7vw, 5rem);
-  max-width: 900px;
-  margin: 0 auto 28px;
+  font-size: clamp(2.4rem, 4.4vw, 3.8rem);
+  max-width: 520px;
+  margin: 0 0 18px;
   text-transform: uppercase;
 }
 .kinetic-heading .line { display: block; overflow: hidden; padding: 0 4px; }
@@ -302,7 +370,10 @@ nav a:hover::after { width: 100%; }
   transform-origin: left bottom;
   transform: translateY(115%) rotate(5deg);
   opacity: 0;
-  animation: line-reveal 1.05s var(--ease) forwards;
+  /* Spring easing gives each line a slight overshoot past its resting
+     position before settling back - like a heavy printed slat dropping
+     into place rather than sliding to a stop. */
+  animation: line-reveal 1.2s var(--ease-spring) forwards;
 }
 .kinetic-heading .line:nth-child(1) .line-inner { animation-delay: 0.15s; }
 .kinetic-heading .line:nth-child(2) .line-inner { animation-delay: 0.32s; }
@@ -319,25 +390,26 @@ nav a:hover::after { width: 100%; }
 }
 
 .hero-sub {
-  max-width: 620px;
-  margin: 0 auto 40px;
+  max-width: 480px;
+  margin: 0 0 26px;
   color: var(--text-dim);
   font-size: 1.05rem;
 }
 .hero-actions {
   display: flex;
   gap: 18px;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
-  margin-bottom: 64px;
+  margin-bottom: 36px;
 }
 .hero-stats {
   display: flex;
-  justify-content: center;
-  gap: 56px;
+  justify-content: flex-start;
+  gap: 24px;
   flex-wrap: wrap;
 }
-.hero-stats div { display: flex; flex-direction: column; align-items: center; }
+.hero-stats div { display: flex; flex-direction: column; align-items: flex-start; flex: 1 1 0; min-width: 110px; }
+.hero-stats span { display: block; }
 .hero-stats strong {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 1.8rem;
@@ -351,7 +423,10 @@ nav a:hover::after { width: 100%; }
 .reveal-fade {
   opacity: 0;
   transform: translateY(26px);
-  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+  /* Opacity resolves first so content becomes visible while still settling
+     into position - it reads as a heavier element continuing to drift down
+     after it has already arrived, rather than a flat fade. */
+  transition: opacity 0.6s var(--ease-soft), transform 1.1s var(--ease-soft);
 }
 .reveal-fade.in-view { opacity: 1; transform: translateY(0); }
 .delay-1 { transition-delay: 0.12s; }
@@ -377,6 +452,7 @@ nav a:hover::after { width: 100%; }
   font-size: 1.05rem;
   color: var(--text-dim);
   animation: ticker-scroll 36s linear infinite;
+  will-change: transform;
 }
 .ticker-sep { color: var(--ember); font-size: 0.65rem; }
 .ticker:hover .ticker-track { animation-play-state: paused; }
@@ -420,7 +496,10 @@ nav a:hover::after { width: 100%; }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 32px 28px;
-  transition: transform 0.45s var(--ease), border-color 0.4s ease, background 0.4s ease;
+  /* Lift settles with a touch of spring - like the card is picked up and
+     gives slightly before holding steady. Color/border resolve at a
+     slower, even pace underneath. */
+  transition: transform 0.5s var(--ease-spring), border-color 0.5s var(--ease-viscous), background 0.5s var(--ease-viscous);
 }
 .feature-card:hover {
   transform: translateY(-8px);
@@ -437,7 +516,7 @@ nav a:hover::after { width: 100%; }
   color: var(--gold);
   border: 1px solid var(--border);
   border-radius: 14px;
-  transition: color 0.4s ease, border-color 0.4s ease, transform 0.5s var(--ease);
+  transition: color 0.4s var(--ease-viscous), border-color 0.4s var(--ease-viscous), transform 0.55s var(--ease-spring);
 }
 .feature-icon svg { width: 26px; height: 26px; }
 .feature-card:hover .feature-icon {
@@ -465,7 +544,7 @@ nav a:hover::after { width: 100%; }
   display: flex;
   flex-direction: column;
   text-align: left;
-  transition: transform 0.45s var(--ease), border-color 0.4s ease, box-shadow 0.4s ease;
+  transition: transform 0.5s var(--ease-spring), border-color 0.5s var(--ease-viscous), box-shadow 0.5s var(--ease-viscous);
 }
 .price-card:hover { border-color: var(--gold); }
 .price-card.featured {
@@ -555,18 +634,46 @@ nav a:hover::after { width: 100%; }
   color: var(--text-dim);
   font-size: 0.9rem;
 }
-.footer-inner a { color: var(--gold-soft); transition: color 0.25s ease; }
+.footer-inner a { color: var(--gold-soft); transition: color 0.3s var(--ease-viscous); }
 .footer-inner a:hover { color: var(--ember-soft); }
 .footer .logo { font-size: 1.3rem; }
 .footer .logo-mark { width: 20px; height: 20px; }
 
+/* GPU layer hints: promote elements with hover-driven transform
+   transitions to their own compositor layer ahead of time, so the first
+   hover doesn't pay a one-off layer-creation cost. Scoped to devices with
+   real hover + a fine pointer - touch devices never trigger these
+   transforms, so they skip the extra GPU memory (the WebGL hero canvas
+   already uses a chunk of it on mobile). */
+@media (hover: hover) and (pointer: fine) {
+  .btn,
+  .feature-card,
+  .price-card,
+  .feature-icon,
+  .logo-mark,
+  .btn-large .arrow {
+    will-change: transform;
+  }
+}
+
 /* Responsive */
 @media (max-width: 720px) {
   nav { display: none; }
+  .hero-pin { padding: 96px 0 48px; }
   .price-card.featured { transform: none; }
   .price-card.featured:hover { transform: translateY(-4px); }
-  .hero { padding: 110px 0 0; }
   .hero-glow-gold, .hero-glow-ember { width: 420px; height: 420px; }
+  .kinetic-heading { font-size: clamp(2rem, 8.5vw, 3.4rem); max-width: 600px; margin: 0 auto 18px; }
+  .hero-sub { max-width: 540px; margin: 0 auto 26px; }
+  .hero-actions, .hero-stats { justify-content: center; }
+  .hero-actions { flex-direction: column; margin-bottom: 28px; }
+  .hero-actions .btn { text-align: center; }
+  .hero-stats { gap: 16px; }
+  .hero-stats div { align-items: center; }
+  .feature-grid, .pricing-grid { grid-template-columns: 1fr; }
+  .btn-small { padding: 12px 22px; }
+  .reveal-fade { transition-duration: 0.6s; }
+  .kinetic-heading .line-inner { animation-duration: 0.8s; }
 }
 
 @media (prefers-reduced-motion: reduce) {

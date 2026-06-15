@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0e0c09">
   <title>less — Ginseng-Honig für mehr Vitalität</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&display=swap" rel="stylesheet">
@@ -36,30 +37,36 @@
 
   <!-- HERO -->
   <section class="hero">
-    <canvas class="hero-canvas" aria-hidden="true"></canvas>
-    <video class="hero-video-source" muted playsinline preload="auto" src="hero.mp4" aria-hidden="true"></video>
-    <div class="hero-glow hero-glow-gold"></div>
-    <div class="hero-glow hero-glow-ember"></div>
-    <div class="container hero-inner">
-      <p class="eyebrow"><span class="eyebrow-dot"></span>100% Natürlich · Wilder Ginseng &amp; Roher Honig</p>
-      <h1 class="kinetic-heading">
-        <span class="line"><span class="line-inner">Hol dir dein</span></span>
-        <span class="line"><span class="line-inner highlight">volles Potenzial</span></span>
-        <span class="line"><span class="line-inner">als Mann zurück</span></span>
-      </h1>
-      <p class="hero-sub reveal-fade delay-1">
-        Eine kraftvolle Mischung aus wildem Ginseng und rohem Honig — entwickelt,
-        um deinen Geist zu schärfen, dein Training zu pushen und deine Lust neu zu entfachen.
-        Jeden Tag aufs Neue.
-      </p>
-      <div class="hero-actions reveal-fade delay-2">
-        <a href="#pricing" class="btn btn-primary magnetic"><span>Jetzt entdecken</span></a>
-        <a href="https://instagram.com" target="_blank" rel="noopener" class="btn btn-ghost magnetic"><span>Folge uns auf Instagram</span></a>
-      </div>
-      <div class="hero-stats reveal-fade delay-3">
-        <div><strong class="counter" data-count="10000" data-suffix="+">0</strong><span>verkaufte Gläser</span></div>
-        <div><strong class="counter" data-count="4.9" data-decimals="1" data-suffix="★">0</strong><span>Durchschnittsbewertung</span></div>
-        <div><strong class="counter" data-count="100" data-suffix="%">0</strong><span>natürliche Zutaten</span></div>
+    <div class="hero-pin">
+      <div class="hero-glow hero-glow-gold"></div>
+      <div class="hero-glow hero-glow-ember"></div>
+      <div class="container hero-grid">
+        <div class="hero-visual">
+          <canvas class="hero-canvas" aria-hidden="true"></canvas>
+          <video class="hero-video-source" muted playsinline preload="metadata" fetchpriority="low" src="hero.mp4" aria-hidden="true"></video>
+        </div>
+        <div class="hero-text">
+          <p class="eyebrow"><span class="eyebrow-dot"></span>100% Natürlich · Wilder Ginseng &amp; Roher Honig</p>
+          <h1 class="kinetic-heading">
+            <span class="line"><span class="line-inner">Hol dir dein</span></span>
+            <span class="line"><span class="line-inner highlight">volles Potenzial</span></span>
+            <span class="line"><span class="line-inner">als Mann zurück</span></span>
+          </h1>
+          <p class="hero-sub reveal-fade delay-1">
+            Eine kraftvolle Mischung aus wildem Ginseng und rohem Honig — entwickelt,
+            um deinen Geist zu schärfen, dein Training zu pushen und deine Lust neu zu entfachen.
+            Jeden Tag aufs Neue.
+          </p>
+          <div class="hero-actions reveal-fade delay-2">
+            <a href="#pricing" class="btn btn-primary magnetic"><span>Jetzt entdecken</span></a>
+            <a href="https://instagram.com" target="_blank" rel="noopener" class="btn btn-ghost magnetic"><span>Folge uns auf Instagram</span></a>
+          </div>
+          <div class="hero-stats reveal-fade delay-3">
+            <div><strong>10.000+</strong><span>verkaufte Gläser</span></div>
+            <div><strong>4,9★</strong><span>Durchschnittsbewertung</span></div>
+            <div><strong>100%</strong><span>natürliche Zutaten</span></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
